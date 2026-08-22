@@ -30,3 +30,9 @@ dotnet run
 ```
 
 Requires the same `DefaultConnection` LocalDB database as `VitraX.API` (see `appsettings.json`).
+
+## Documentation
+
+Full project documentation (installation, user manual, testing, conclusion, references)
+covering all three VitraX projects lives in
+[`VitraX.API/DOCUMENTATION.md`](https://github.com/9nr9gtg62x-lgtm/VitraX.API/blob/master/DOCUMENTATION.md).
