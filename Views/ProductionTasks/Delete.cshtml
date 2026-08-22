@@ -1,0 +1,44 @@
+@model VitraX.API.Entities.ProductionTask
+@{
+    ViewData["Title"] = "حذف مهمة";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="mx-auto" style="max-width:32rem;">
+        <div class="glass-card rounded-4 overflow-hidden">
+            <div class="p-4 text-center">
+                <div class="vx-icon-tile mx-auto mb-3" style="background:rgba(var(--bs-danger-rgb),.1);color:var(--bs-danger);width:4rem;height:4rem;font-size:1.75rem;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h4 class="fw-bold mb-2">تأكيد الحذف</h4>
+                <p class="text-muted small">
+                    هل أنت متأكد من حذف المهمة
+                    <span class="fw-bold text-primary">#@Model.TaskId</span>؟
+                    <br />لا يمكن التراجع عن هذا الإجراء.
+                </p>
+            </div>
+
+            <div class="px-4 row g-3 text-end">
+                <div class="col-6">
+                    <p class="text-muted small mb-1">المرحلة</p>
+                    <p class="fw-bold mb-0">@Model.Stage</p>
+                </div>
+                <div class="col-6">
+                    <p class="text-muted small mb-1">العامل</p>
+                    <p class="fw-bold mb-0">@(Model.Worker?.WorkerName ?? "-")</p>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 mt-3 border-top d-flex gap-2">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="TaskId" />
+                    <button type="submit" class="btn btn-danger d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-trash"></i> نعم، احذف
+                    </button>
+                </form>
+                <a href="/ProductionTasks" class="btn btn-light px-4">إلغاء</a>
+            </div>
+        </div>
+    </div>
+</div>

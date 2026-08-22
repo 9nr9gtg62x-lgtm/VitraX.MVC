@@ -1,0 +1,114 @@
+@model IEnumerable<VitraX.API.Entities.Product>
+@{
+    ViewData["Title"] = "المنتجات";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="/Products/Create" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm">
+            <i class="bi bi-plus-lg"></i> إضافة منتج
+        </a>
+        <div class="text-end">
+            <h2 class="fw-bold text-primary mb-0">المنتجات</h2>
+            <p class="text-muted small mb-0">إدارة منتجات الزجاج</p>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table id="productsTable" class="table table-hover align-middle mb-0 text-end">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>الوصف</th>
+                        <th>السماكة</th>
+                        <th>المقاس</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2 justify-content-end">
+                                    <span class="fw-bold">@item.ProductName</span>
+                                    <span class="vx-thumb">
+                                        @if (!string.IsNullOrEmpty(item.ImagePath))
+                                        {
+                                            <img src="@item.ImagePath" alt="@item.ProductName" />
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-front"></i>
+                                        }
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-muted">@item.Description</td>
+                            <td class="font-en">@item.Thickness mm</td>
+                            <td>@item.Size</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1 justify-content-end">
+                                    <a href="/Products/Details/@item.ProductId" class="btn btn-sm p-2 text-primary" title="تفاصيل"><i class="bi bi-eye"></i></a>
+                                    <a href="/Products/Edit/@item.ProductId" class="btn btn-sm p-2 text-secondary" title="تعديل"><i class="bi bi-pencil"></i></a>
+                                    <button type="button" class="btn btn-sm p-2 text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="@item.ProductId" data-name="@item.ProductName" title="حذف">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Modal: تأكيد الحذف -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <form asp-action="Delete" method="post">
+                <input type="hidden" name="id" id="deleteItemId" />
+                <div class="modal-body text-center p-4">
+                    <div class="vx-icon-tile mx-auto mb-3" style="background:rgba(var(--bs-danger-rgb),.1);color:var(--bs-danger);width:4rem;height:4rem;font-size:1.75rem;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">تأكيد الحذف</h5>
+                    <p class="text-muted mb-0">
+                        هل أنت متأكد من حذف المنتج
+                        <span class="fw-bold text-primary" id="deleteItemName"></span>؟<br />
+                        لا يمكن التراجع عن هذا الإجراء.
+                    </p>
+                </div>
+                <div class="modal-footer border-top-0 justify-content-center gap-2 pb-4">
+                    <button type="submit" class="btn btn-danger px-4"><i class="bi bi-trash me-1"></i> نعم، احذف</button>
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function (event) {
+            const btn = event.relatedTarget;
+            document.getElementById('deleteItemId').value = btn.getAttribute('data-id');
+            document.getElementById('deleteItemName').textContent = btn.getAttribute('data-name');
+        });
+        $(function () {
+            $('#productsTable').DataTable({
+                language: {
+                    search: "بحث:", zeroRecords: "لا توجد نتائج",
+                    info: "عرض _START_ إلى _END_ من _TOTAL_ سجل", infoEmpty: "لا توجد سجلات",
+                    paginate: { previous: "السابق", next: "التالي" }
+                },
+                columnDefs: [{ orderable: false, targets: -1 }]
+            });
+        });
+    </script>
+}

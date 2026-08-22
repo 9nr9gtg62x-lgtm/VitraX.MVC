@@ -1,0 +1,71 @@
+@model VitraX.API.Entities.ProductionTask
+@{
+    ViewData["Title"] = "إضافة مهمة";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="mx-auto" style="max-width:48rem;">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <a href="/ProductionTasks" class="btn btn-light btn-sm rounded-3"><i class="bi bi-arrow-right"></i></a>
+            <div class="text-end flex-fill">
+                <h2 class="fw-bold text-primary mb-0">إضافة مهمة جديدة</h2>
+                <p class="text-muted small mb-0">أدخل بيانات المهمة</p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-4 p-4">
+            <form asp-action="Create" method="post" class="row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                <div class="col-md-6">
+                    <label asp-for="OrderId" class="form-label fw-bold">أمر الإنتاج</label>
+                    <select asp-for="OrderId" asp-items="ViewBag.Orders" class="form-select">
+                        <option value="">— اختر أمراً —</option>
+                    </select>
+                    <span asp-validation-for="OrderId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="WorkerId" class="form-label fw-bold">العامل</label>
+                    <select asp-for="WorkerId" asp-items="ViewBag.Workers" class="form-select">
+                        <option value="">— اختر عاملاً —</option>
+                    </select>
+                    <span asp-validation-for="WorkerId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Stage" class="form-label fw-bold">المرحلة</label>
+                    <select asp-for="Stage" asp-items="ViewBag.Stages" class="form-select">
+                        <option value="">— اختر المرحلة —</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Status" class="form-label fw-bold">الحالة</label>
+                    <select asp-for="Status" asp-items="ViewBag.Statuses" class="form-select">
+                        <option value="">— اختر الحالة —</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="StartTime" class="form-label fw-bold">وقت البدء</label>
+                    <input asp-for="StartTime" type="datetime-local" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndTime" class="form-label fw-bold">وقت الانتهاء</label>
+                    <input asp-for="EndTime" type="datetime-local" class="form-control" />
+                </div>
+
+                <div class="col-12 d-flex gap-2 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-save"></i> حفظ
+                    </button>
+                    <a href="/ProductionTasks" class="btn btn-light px-4">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,193 @@
+/* VitraX design tokens — Bootstrap 5 theme override (CSS variables) */
+:root {
+    --bs-primary: #00685f;
+    --bs-primary-rgb: 0, 104, 95;
+    --bs-secondary: #006b5f;
+    --bs-secondary-rgb: 0, 107, 95;
+    --bs-danger: #ba1a1a;
+    --bs-danger-rgb: 186, 26, 26;
+    --bs-body-font-family: "Cairo", sans-serif;
+    --bs-body-bg: #f8f9fa;
+    --bs-body-color: #191c1d;
+    --bs-border-radius: 14px;
+    --bs-border-radius-sm: 10px;
+    --bs-border-radius-lg: 14px;
+
+    --vx-primary-container: #008378;
+    --vx-secondary-fixed: #71f8e4;
+    --vx-tertiary: #465c87;
+    --vx-tertiary-container: #5f74a1;
+    --vx-surface-container: #edeeef;
+    --vx-surface-container-low: #f3f4f5;
+    --vx-on-surface-variant: #3d4947;
+    --vx-outline: #6d7a77;
+    --vx-outline-variant: #bcc9c6;
+    --vx-navy: #0f2850;
+    --vx-sidebar-width: 280px;
+    --vx-font-en: "Inter", sans-serif;
+    --vx-gutter: 1.5rem;
+    --vx-page-margin: 2rem;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.font-en {
+    font-family: var(--vx-font-en);
+}
+
+/* ===== Glass card ===== */
+.glass-card {
+    background: rgba(255, 255, 255, .9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, .4);
+    box-shadow: 0 4px 20px rgba(13, 148, 136, .06);
+}
+
+/* ===== Sidebar ===== */
+.vx-sidebar {
+    position: fixed;
+    inset-inline-end: 0;
+    top: 0;
+    height: 100%;
+    width: var(--vx-sidebar-width);
+    background: var(--vx-navy);
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+    padding: var(--vx-page-margin) 0;
+}
+
+.vx-sidebar-brand {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.vx-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: rgba(255, 255, 255, .6);
+    text-decoration: none;
+    border-inline-end: 4px solid transparent;
+    transition: all .2s ease;
+}
+
+.vx-nav-link:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+
+.vx-nav-link.active {
+    background: rgba(113, 248, 228, .15);
+    color: var(--vx-secondary-fixed);
+    border-inline-end-color: var(--vx-secondary-fixed);
+}
+
+.vx-main {
+    margin-inline-end: var(--vx-sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.vx-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background: rgba(248, 249, 250, .85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--vx-outline-variant);
+}
+
+/* ===== KPI icon tiles ===== */
+.vx-icon-tile {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--bs-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.vx-icon-tile-primary { background: rgba(var(--bs-primary-rgb), .1); color: var(--bs-primary); }
+.vx-icon-tile-secondary { background: rgba(0, 107, 95, .1); color: var(--bs-secondary); }
+.vx-icon-tile-tertiary { background: rgba(95, 116, 161, .12); color: var(--vx-tertiary-container); }
+.vx-icon-tile-muted { background: rgba(61, 73, 71, .1); color: var(--vx-on-surface-variant); }
+
+/* ===== Status badges ===== */
+.vx-badge {
+    padding: .3rem .75rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.vx-badge-progress { background: rgba(0, 107, 95, .1); color: var(--bs-secondary); }
+.vx-badge-complete { background: rgba(95, 116, 161, .12); color: var(--vx-tertiary-container); }
+.vx-badge-stopped { background: rgba(186, 26, 26, .1); color: var(--bs-danger); }
+
+/* ===== Dashboard chart / gauge ===== */
+.chart-bar {
+    transition: height 1s ease-out;
+}
+
+.vx-gauge-svg {
+    transform: rotate(-90deg);
+}
+
+/* ===== Avatar / thumbnail ===== */
+.vx-thumb {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: .6rem;
+    overflow: hidden;
+    background: rgba(var(--bs-primary-rgb), .12);
+    color: var(--bs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vx-thumb-round {
+    border-radius: 50%;
+}
+
+.vx-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Auth pages ===== */
+.vx-auth-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(#0d9488 .5px, transparent .5px);
+    background-size: 24px 24px;
+    opacity: .05;
+}
+
+/* ===== DataTables x Bootstrap RTL tweaks ===== */
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    font-family: var(--vx-font-en);
+    font-size: .8rem;
+}
+
+table.dataTable thead th {
+    background: var(--vx-surface-container-low);
+    color: var(--vx-on-surface-variant);
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}

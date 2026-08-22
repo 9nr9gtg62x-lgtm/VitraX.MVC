@@ -1,0 +1,57 @@
+@model VitraX.API.Entities.Worker
+@{
+    ViewData["Title"] = "إضافة عامل";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="mx-auto" style="max-width:48rem;">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <a href="/Workers" class="btn btn-light btn-sm rounded-3"><i class="bi bi-arrow-right"></i></a>
+            <div class="text-end flex-fill">
+                <h2 class="fw-bold text-primary mb-0">إضافة عامل جديد</h2>
+                <p class="text-muted small mb-0">أدخل بيانات العامل</p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-4 p-4">
+            <form asp-action="Create" method="post" class="row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                <div class="col-md-6">
+                    <label asp-for="WorkerName" class="form-label fw-bold">اسم العامل</label>
+                    <input asp-for="WorkerName" class="form-control" placeholder="مثال: أحمد خالد" />
+                    <span asp-validation-for="WorkerName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Role" class="form-label fw-bold">الدور</label>
+                    <input asp-for="Role" class="form-control" placeholder="مثال: فني إنتاج" />
+                    <span asp-validation-for="Role" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Phone" class="form-label fw-bold">الهاتف</label>
+                    <input asp-for="Phone" class="form-control" placeholder="7XXXXXXXX" />
+                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ImagePath" class="form-label fw-bold">رابط الصورة</label>
+                    <input asp-for="ImagePath" class="form-control" placeholder="https://..." />
+                    <span asp-validation-for="ImagePath" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12 d-flex gap-2 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-save"></i> حفظ
+                    </button>
+                    <a href="/Workers" class="btn btn-light px-4">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

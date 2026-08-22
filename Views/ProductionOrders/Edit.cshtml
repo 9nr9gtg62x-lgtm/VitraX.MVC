@@ -1,0 +1,68 @@
+@model VitraX.API.Entities.ProductionOrder
+@{
+    ViewData["Title"] = "تعديل أمر إنتاج";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="mx-auto" style="max-width:48rem;">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <a href="/ProductionOrders" class="btn btn-light btn-sm rounded-3"><i class="bi bi-arrow-right"></i></a>
+            <div class="text-end flex-fill">
+                <h2 class="fw-bold text-primary mb-0">تعديل أمر الإنتاج</h2>
+                <p class="text-muted small mb-0">أمر رقم #@Model.OrderId</p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-4 p-4">
+            <form asp-action="Edit" method="post" class="row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                <input type="hidden" asp-for="OrderId" />
+
+                <div class="col-md-6">
+                    <label asp-for="ProductId" class="form-label fw-bold">المنتج</label>
+                    <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-select"></select>
+                    <span asp-validation-for="ProductId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Quantity" class="form-label fw-bold">الكمية</label>
+                    <input asp-for="Quantity" type="number" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="StartDate" class="form-label fw-bold">تاريخ البدء</label>
+                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndDate" class="form-label fw-bold">تاريخ الانتهاء</label>
+                    <input asp-for="EndDate" type="date" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Status" class="form-label fw-bold">الحالة</label>
+                    <select asp-for="Status" asp-items="ViewBag.Statuses" class="form-select"></select>
+                    <span asp-validation-for="Status" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label fw-bold">ملاحظات</label>
+                    <textarea asp-for="Notes" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12 d-flex gap-2 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-save"></i> حفظ التعديلات
+                    </button>
+                    <a href="/ProductionOrders" class="btn btn-light px-4">إلغاء</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

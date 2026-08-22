@@ -1,0 +1,64 @@
+@model VitraX.API.Entities.ProductionTask
+@{
+    ViewData["Title"] = "تفاصيل المهمة";
+    Layout = "_Layout";
+}
+
+<div class="p-4">
+    <div class="mx-auto" style="max-width:48rem;">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <a href="/ProductionTasks" class="btn btn-light btn-sm rounded-3"><i class="bi bi-arrow-right"></i></a>
+            <div class="text-end flex-fill">
+                <h2 class="fw-bold text-primary mb-0">تفاصيل المهمة</h2>
+                <p class="text-muted small mb-0">عرض بيانات المهمة</p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-4 overflow-hidden">
+            <div class="p-4 d-flex align-items-center gap-3 text-white" style="background:var(--vx-navy);">
+                <div class="vx-icon-tile" style="background:rgba(255,255,255,.15);color:var(--vx-secondary-fixed);font-size:1.75rem;width:4rem;height:4rem;">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+                <div class="text-end flex-fill">
+                    <h3 class="fw-bold mb-0">مهمة #@Model.TaskId</h3>
+                    <p class="mb-0" style="color:var(--vx-secondary-fixed);opacity:.7;">@Model.Stage</p>
+                </div>
+            </div>
+
+            <div class="p-4 row g-3 text-end">
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">أمر الإنتاج</p>
+                    <p class="fw-bold font-en mb-0">#@Model.OrderId</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">العامل</p>
+                    <p class="fw-bold mb-0">@(Model.Worker?.WorkerName ?? "-")</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">المرحلة</p>
+                    <p class="fw-bold mb-0">@Model.Stage</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">الحالة</p>
+                    <p class="fw-bold mb-0">@Model.Status</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">وقت البدء</p>
+                    <p class="fw-bold font-en mb-0">@Model.StartTime.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-muted small mb-1">وقت الانتهاء</p>
+                    <p class="fw-bold font-en mb-0">@Model.EndTime.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="px-4 py-3 border-top d-flex gap-2">
+                <a href="/ProductionTasks/Edit/@Model.TaskId" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                    <i class="bi bi-pencil"></i> تعديل
+                </a>
+                <a href="/ProductionTasks/Delete/@Model.TaskId" class="btn btn-outline-danger px-4">حذف</a>
+                <a href="/ProductionTasks" class="btn btn-light px-4 ms-auto">رجوع</a>
+            </div>
+        </div>
+    </div>
+</div>

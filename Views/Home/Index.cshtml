@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "لوحة التحكم";
+    Layout = "_Layout";
+}
+
+<div class="p-4" style="gap:1.5rem;">
+    <!-- ===== صف الأرقام (KPIs) ===== -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="glass-card rounded-4 p-4 h-100 d-flex align-items-center gap-3">
+                <div class="vx-icon-tile vx-icon-tile-primary"><i class="bi bi-box-seam"></i></div>
+                <div>
+                    <p class="small text-muted mb-0">إجمالي المنتجات</p>
+                    <h3 class="fw-bold text-primary mb-0">@ViewBag.TotalProducts</h3>
+                    <p class="mb-0 font-en" style="font-size:10px;color:var(--bs-primary);opacity:.7;">Total Products</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="glass-card rounded-4 p-4 h-100 d-flex align-items-center gap-3">
+                <div class="vx-icon-tile vx-icon-tile-secondary"><i class="bi bi-gear-wide-connected"></i></div>
+                <div>
+                    <p class="small text-muted mb-0">أوامر الإنتاج</p>
+                    <h3 class="fw-bold text-secondary mb-0">@ViewBag.TotalOrders</h3>
+                    <p class="mb-0 font-en" style="font-size:10px;color:var(--bs-secondary);opacity:.7;">Production Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="glass-card rounded-4 p-4 h-100 d-flex align-items-center gap-3">
+                <div class="vx-icon-tile vx-icon-tile-tertiary"><i class="bi bi-check2-square"></i></div>
+                <div>
+                    <p class="small text-muted mb-0">إجمالي المهام</p>
+                    <h3 class="fw-bold mb-0" style="color:var(--vx-tertiary-container);">@ViewBag.TotalTasks</h3>
+                    <p class="mb-0 font-en" style="font-size:10px;color:var(--vx-tertiary-container);opacity:.7;">Production Tasks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="glass-card rounded-4 p-4 h-100 d-flex align-items-center gap-3">
+                <div class="vx-icon-tile vx-icon-tile-muted"><i class="bi bi-person-workspace"></i></div>
+                <div>
+                    <p class="small text-muted mb-0">إجمالي العمال</p>
+                    <h3 class="fw-bold mb-0" style="color:var(--vx-on-surface-variant);">@ViewBag.TotalWorkers</h3>
+                    <p class="mb-0 font-en" style="font-size:10px;color:var(--vx-on-surface-variant);opacity:.7;">Total Workers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== الصف الأوسط: الرسم البياني + دائرة الكفاءة ===== -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-8">
+            <div class="glass-card rounded-4 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="badge bg-light text-dark font-en" style="font-size:10px;">Week 34</span>
+                    <div class="text-end">
+                        <h4 class="fw-bold text-primary mb-0">الإنتاج الأسبوعي</h4>
+                        <p class="small text-muted mb-0">معدل الوحدات المكتملة يومياً</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-end justify-content-between gap-3 px-2 border-bottom pb-0" style="height:16rem;">
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3" style="height:60%;background:rgba(var(--bs-primary-rgb),.35);"></div>
+                        <span class="small font-en">SUN</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3 bg-primary" style="height:85%;"></div>
+                        <span class="small font-en">MON</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3" style="height:75%;background:rgba(var(--bs-primary-rgb),.35);"></div>
+                        <span class="small font-en">TUE</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3 bg-secondary" style="height:95%;"></div>
+                        <span class="small font-en">WED</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3" style="height:40%;background:rgba(var(--bs-primary-rgb),.35);"></div>
+                        <span class="small font-en">THU</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3 bg-secondary-subtle" style="height:10%;"></div>
+                        <span class="small font-en">FRI</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center flex-fill gap-2">
+                        <div class="chart-bar w-100 rounded-top-3" style="height:30%;background:rgba(var(--bs-primary-rgb),.35);"></div>
+                        <span class="small font-en">SAT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="rounded-4 p-4 h-100 d-flex flex-column align-items-center justify-content-center text-center text-white shadow position-relative overflow-hidden" style="background:var(--vx-navy);">
+                <h4 class="fw-bold mb-1">الكفاءة المباشرة</h4>
+                <p class="small text-white-50 mb-4 font-en">Live Efficiency</p>
+                <div class="position-relative d-flex align-items-center justify-content-center" style="width:12rem;height:12rem;">
+                    <svg class="vx-gauge-svg w-100 h-100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" fill="none" r="45" stroke="#ffffff20" stroke-width="8"></circle>
+                        <circle cx="50" cy="50" fill="none" r="45" stroke="#71f8e4" stroke-dasharray="282.7" stroke-dashoffset="21.5" stroke-linecap="round" stroke-width="8"></circle>
+                    </svg>
+                    <div class="position-absolute d-flex flex-column align-items-center">
+                        <span class="fs-2 fw-bold font-en">92.4%</span>
+                        <span class="font-en" style="font-size:10px;color:var(--vx-secondary-fixed);">+2.1% TODAY</span>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 w-100 mt-4">
+                    <div class="flex-fill bg-white bg-opacity-10 py-2 rounded-3 border border-white border-opacity-10">
+                        <p class="mb-0" style="font-size:10px;color:#fff8;">Temp</p>
+                        <p class="small fw-bold mb-0">1240°C</p>
+                    </div>
+                    <div class="flex-fill bg-white bg-opacity-10 py-2 rounded-3 border border-white border-opacity-10">
+                        <p class="mb-0" style="font-size:10px;color:#fff8;">Speed</p>
+                        <p class="small fw-bold mb-0">0.8m/s</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== جدول أوامر الإنتاج الأخيرة ===== -->
+    <div class="glass-card rounded-4 overflow-hidden">
+        <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+            <a class="btn btn-sm btn-link text-primary text-decoration-none" href="/ProductionOrders">
+                عرض الكل <i class="bi bi-chevron-left"></i>
+            </a>
+            <div class="text-end">
+                <h4 class="fw-bold text-primary mb-0">أوامر الإنتاج الأخيرة</h4>
+                <p class="small text-muted mb-0">Recent Production Orders</p>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="recentOrdersTable" class="table table-hover align-middle mb-0 text-end">
+                <thead>
+                    <tr>
+                        <th>رقم الأمر</th>
+                        <th>اسم المنتج</th>
+                        <th>الكمية</th>
+                        <th>الحالة</th>
+                        <th>تاريخ البدء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-en">#VX-9021</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2 justify-content-end">
+                                <span class="fw-bold">زجاج معماري مقسى 8 ملم</span>
+                                <span class="vx-thumb"><i class="bi bi-front"></i></span>
+                            </div>
+                        </td>
+                        <td class="font-en">450 Unit</td>
+                        <td><span class="vx-badge vx-badge-progress">قيد التنفيذ</span></td>
+                        <td class="font-en">2026-05-12</td>
+                    </tr>
+                    <tr>
+                        <td class="font-en">#VX-9022</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2 justify-content-end">
+                                <span class="fw-bold">زجاج مغلف عازل للصوت</span>
+                                <span class="vx-thumb"><i class="bi bi-layers"></i></span>
+                            </div>
+                        </td>
+                        <td class="font-en">1,200 Unit</td>
+                        <td><span class="vx-badge vx-badge-complete">مكتمل</span></td>
+                        <td class="font-en">2026-05-10</td>
+                    </tr>
+                    <tr>
+                        <td class="font-en">#VX-9023</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2 justify-content-end">
+                                <span class="fw-bold">مرايا عاكسة فائقة الوضوح</span>
+                                <span class="vx-thumb"><i class="bi bi-grid-3x3-gap"></i></span>
+                            </div>
+                        </td>
+                        <td class="font-en">280 Unit</td>
+                        <td><span class="vx-badge vx-badge-stopped">متوقف</span></td>
+                        <td class="font-en">2026-05-09</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#recentOrdersTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: true
+            });
+        });
+    </script>
+}
