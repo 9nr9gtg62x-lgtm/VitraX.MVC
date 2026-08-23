@@ -9,8 +9,8 @@ namespace VitraX.MVC.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly VitraX.API.Data.AppDbContext _context;
-        public HomeController(ILogger<HomeController> logger, VitraX.API.Data.AppDbContext context)
+        private readonly VitraX.Api.Data.AppDbContext _context;
+        public HomeController(ILogger<HomeController> logger, VitraX.Api.Data.AppDbContext context)
         {
            
             _context = context;

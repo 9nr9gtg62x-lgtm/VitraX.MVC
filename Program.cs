@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Linq;
-using VitraX.API.Data;
+using VitraX.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
     .ConfigureApplicationPartManager(apm =>
     {
-        var apiPart = apm.ApplicationParts.FirstOrDefault(p => p.Name == "VitraX.API");
+        var apiPart = apm.ApplicationParts.FirstOrDefault(p => p.Name == "VitraX.Api");
         if (apiPart != null)
             apm.ApplicationParts.Remove(apiPart);
     });

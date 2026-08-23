@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VitraX.API\VitraX.API\VitraX.API.csproj" />
+    <ProjectReference Include="..\VitraX.API\VitraX.API\VitraX.Api.csproj" />
   </ItemGroup>
 
 </Project>
