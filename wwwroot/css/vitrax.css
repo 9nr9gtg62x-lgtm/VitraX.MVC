@@ -48,7 +48,8 @@ body {
 /* ===== Sidebar ===== */
 .vx-sidebar {
     position: fixed;
-    inset-inline-start: 0;
+    right: 0;
+    left: auto;
     top: 0;
     height: 100%;
     width: var(--vx-sidebar-width);
@@ -72,7 +73,7 @@ body {
     padding: 1rem 1.5rem;
     color: rgba(255, 255, 255, .6);
     text-decoration: none;
-    border-inline-end: 4px solid transparent;
+    border-left: 4px solid transparent;
     transition: all .2s ease;
 }
 
@@ -84,11 +85,12 @@ body {
 .vx-nav-link.active {
     background: rgba(113, 248, 228, .15);
     color: var(--vx-secondary-fixed);
-    border-inline-end-color: var(--vx-secondary-fixed);
+    border-left-color: var(--vx-secondary-fixed);
 }
 
 .vx-main {
-    margin-inline-start: var(--vx-sidebar-width);
+    margin-right: var(--vx-sidebar-width);
+    margin-left: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
