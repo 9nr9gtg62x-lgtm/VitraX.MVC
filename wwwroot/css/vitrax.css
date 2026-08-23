@@ -48,7 +48,7 @@ body {
 /* ===== Sidebar ===== */
 .vx-sidebar {
     position: fixed;
-    inset-inline-end: 0;
+    inset-inline-start: 0;
     top: 0;
     height: 100%;
     width: var(--vx-sidebar-width);
@@ -88,7 +88,7 @@ body {
 }
 
 .vx-main {
-    margin-inline-end: var(--vx-sidebar-width);
+    margin-inline-start: var(--vx-sidebar-width);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
