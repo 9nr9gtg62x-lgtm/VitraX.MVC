@@ -1,23 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Linq;
-using VitraX.Infrastructure.Data;
+using VitraX.MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== منع مشروع MVC من تحميل كنترولرات الـ API =====
-builder.Services.AddControllersWithViews()
-    .ConfigureApplicationPartManager(apm =>
-    {
-        var apiPart = apm.ApplicationParts.FirstOrDefault(p => p.Name == "VitraX.Api");
-        if (apiPart != null)
-            apm.ApplicationParts.Remove(apiPart);
-    });
+builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpContextAccessor();
 
-// ===== إضافة المصادقة بالكوكيز =====
+var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+    ?? throw new InvalidOperationException("ApiSettings:BaseUrl is not configured.");
+
+builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

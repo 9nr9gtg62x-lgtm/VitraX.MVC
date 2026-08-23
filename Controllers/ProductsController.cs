@@ -1,28 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
+using VitraX.MVC.Services;
 
 namespace VitraX.MVC.Controllers
 {
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly AppDbContext _context;
-        public ProductsController(AppDbContext context) => _context = context;
+        private const string Resource = "api/products";
+        private readonly IApiClient _apiClient;
+        public ProductsController(IApiClient apiClient) => _apiClient = apiClient;
 
         // Index
         public async Task<IActionResult> Index()
-        {
-            var products = await _context.Products.ToListAsync();
-            return View(products);
-        }
+            => View(await _apiClient.GetAllAsync<Product>(Resource));
 
         // Details
         public async Task<IActionResult> Details(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+            var product = await _apiClient.GetByIdAsync<Product>(Resource, id);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -37,9 +34,10 @@ namespace VitraX.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.CreateAsync(Resource, product);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
             return View(product);
         }
@@ -47,7 +45,7 @@ namespace VitraX.MVC.Controllers
         // Edit (GET)
         public async Task<IActionResult> Edit(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _apiClient.GetByIdAsync<Product>(Resource, id);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -60,9 +58,10 @@ namespace VitraX.MVC.Controllers
             if (id != product.ProductId) return NotFound();
             if (ModelState.IsValid)
             {
-                _context.Update(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.UpdateAsync(Resource, id, product);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
             return View(product);
         }
@@ -70,7 +69,7 @@ namespace VitraX.MVC.Controllers
         // Delete (GET)
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+            var product = await _apiClient.GetByIdAsync<Product>(Resource, id);
             if (product == null) return NotFound();
             return View(product);
         }
@@ -80,12 +79,7 @@ namespace VitraX.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-            }
+            await _apiClient.DeleteAsync(Resource, id);
             return RedirectToAction(nameof(Index));
         }
     }

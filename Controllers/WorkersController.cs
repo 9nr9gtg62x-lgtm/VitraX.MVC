@@ -1,25 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
+using VitraX.MVC.Services;
 
 namespace VitraX.MVC.Controllers
 {
     [Authorize]
     public class WorkersController : Controller
     {
-        private readonly AppDbContext _context;
-        public WorkersController(AppDbContext context) => _context = context;
+        private const string Resource = "api/workers";
+        private readonly IApiClient _apiClient;
+        public WorkersController(IApiClient apiClient) => _apiClient = apiClient;
 
         public async Task<IActionResult> Index()
-            => View(await _context.Workers.ToListAsync());
+            => View(await _apiClient.GetAllAsync<Worker>(Resource));
 
         public async Task<IActionResult> Details(int id)
         {
-            var w = await _context.Workers.FirstOrDefaultAsync(x => x.WorkerId == id);
-            if (w == null) return NotFound();
-            return View(w);
+            var worker = await _apiClient.GetByIdAsync<Worker>(Resource, id);
+            if (worker == null) return NotFound();
+            return View(worker);
         }
 
         public IActionResult Create() => View();
@@ -30,18 +30,19 @@ namespace VitraX.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Workers.Add(worker);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.CreateAsync(Resource, worker);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
             return View(worker);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var w = await _context.Workers.FindAsync(id);
-            if (w == null) return NotFound();
-            return View(w);
+            var worker = await _apiClient.GetByIdAsync<Worker>(Resource, id);
+            if (worker == null) return NotFound();
+            return View(worker);
         }
 
         [HttpPost]
@@ -51,30 +52,26 @@ namespace VitraX.MVC.Controllers
             if (id != worker.WorkerId) return NotFound();
             if (ModelState.IsValid)
             {
-                _context.Update(worker);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.UpdateAsync(Resource, id, worker);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
             return View(worker);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var w = await _context.Workers.FirstOrDefaultAsync(x => x.WorkerId == id);
-            if (w == null) return NotFound();
-            return View(w);
+            var worker = await _apiClient.GetByIdAsync<Worker>(Resource, id);
+            if (worker == null) return NotFound();
+            return View(worker);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var w = await _context.Workers.FindAsync(id);
-            if (w != null)
-            {
-                _context.Workers.Remove(w);
-                await _context.SaveChangesAsync();
-            }
+            await _apiClient.DeleteAsync(Resource, id);
             return RedirectToAction(nameof(Index));
         }
     }

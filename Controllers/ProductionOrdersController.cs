@@ -1,40 +1,58 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
+using VitraX.MVC.Services;
 
 namespace VitraX.MVC.Controllers
 {
     [Authorize]
     public class ProductionOrdersController : Controller
     {
-        private readonly AppDbContext _context;
-        public ProductionOrdersController(AppDbContext context) => _context = context;
+        private const string OrdersResource = "api/productionorders";
+        private const string ProductsResource = "api/products";
+
+        private readonly IApiClient _apiClient;
+        public ProductionOrdersController(IApiClient apiClient) => _apiClient = apiClient;
 
         private static readonly string[] StatusOptions = { "قيد التنفيذ", "مكتمل", "متوقف" };
 
-        private void LoadLists(object? selectedProduct = null, object? selectedStatus = null)
+        private async Task LoadListsAsync(object? selectedProduct = null, object? selectedStatus = null)
         {
-            ViewBag.Products = new SelectList(_context.Products, "ProductId", "ProductName", selectedProduct);
+            var products = await _apiClient.GetAllAsync<Product>(ProductsResource);
+            ViewBag.Products = new SelectList(products, "ProductId", "ProductName", selectedProduct);
             ViewBag.Statuses = new SelectList(StatusOptions, selectedStatus);
         }
 
+        // الـ API لا يُرجع الكيانات المرتبطة (Product) ضمن أوامر الإنتاج، لذا نربطها هنا للعرض فقط
+        private async Task AttachProductsAsync(IEnumerable<ProductionOrder> orders)
+        {
+            var products = (await _apiClient.GetAllAsync<Product>(ProductsResource))
+                .ToDictionary(p => p.ProductId);
+
+            foreach (var order in orders)
+                if (products.TryGetValue(order.ProductId, out var product))
+                    order.Product = product;
+        }
+
         public async Task<IActionResult> Index()
-            => View(await _context.ProductionOrders.Include(o => o.Product).ToListAsync());
+        {
+            var orders = await _apiClient.GetAllAsync<ProductionOrder>(OrdersResource);
+            await AttachProductsAsync(orders);
+            return View(orders);
+        }
 
         public async Task<IActionResult> Details(int id)
         {
-            var o = await _context.ProductionOrders.Include(x => x.Product)
-                        .FirstOrDefaultAsync(x => x.OrderId == id);
-            if (o == null) return NotFound();
-            return View(o);
+            var order = await _apiClient.GetByIdAsync<ProductionOrder>(OrdersResource, id);
+            if (order == null) return NotFound();
+            await AttachProductsAsync(new[] { order });
+            return View(order);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            LoadLists();
+            await LoadListsAsync();
             return View();
         }
 
@@ -55,20 +73,21 @@ namespace VitraX.MVC.Controllers
             // 3) الآن التحقق يعمل على باقي الحقول (المنتج، الكمية، الحالة...)
             if (ModelState.IsValid)
             {
-                _context.ProductionOrders.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.CreateAsync(OrdersResource, order);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
-            LoadLists(order.ProductId, order.Status);
+            await LoadListsAsync(order.ProductId, order.Status);
             return View(order);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var o = await _context.ProductionOrders.FindAsync(id);
-            if (o == null) return NotFound();
-            LoadLists(o.ProductId, o.Status);
-            return View(o);
+            var order = await _apiClient.GetByIdAsync<ProductionOrder>(OrdersResource, id);
+            if (order == null) return NotFound();
+            await LoadListsAsync(order.ProductId, order.Status);
+            return View(order);
         }
 
         [HttpPost]
@@ -87,32 +106,28 @@ namespace VitraX.MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Update(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.UpdateAsync(OrdersResource, id, order);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
-            LoadLists(order.ProductId, order.Status);
+            await LoadListsAsync(order.ProductId, order.Status);
             return View(order);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var o = await _context.ProductionOrders.Include(x => x.Product)
-                        .FirstOrDefaultAsync(x => x.OrderId == id);
-            if (o == null) return NotFound();
-            return View(o);
+            var order = await _apiClient.GetByIdAsync<ProductionOrder>(OrdersResource, id);
+            if (order == null) return NotFound();
+            await AttachProductsAsync(new[] { order });
+            return View(order);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var o = await _context.ProductionOrders.FindAsync(id);
-            if (o != null)
-            {
-                _context.ProductionOrders.Remove(o);
-                await _context.SaveChangesAsync();
-            }
+            await _apiClient.DeleteAsync(OrdersResource, id);
             return RedirectToAction(nameof(Index));
         }
     }

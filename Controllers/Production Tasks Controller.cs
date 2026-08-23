@@ -1,49 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
+using VitraX.MVC.Services;
 
 namespace VitraX.MVC.Controllers
 {
     [Authorize]
     public class ProductionTasksController : Controller
     {
-        private readonly AppDbContext _context;
-        public ProductionTasksController(AppDbContext context) => _context = context;
+        private const string TasksResource = "api/productiontasks";
+        private const string OrdersResource = "api/productionorders";
+        private const string WorkersResource = "api/workers";
+
+        private readonly IApiClient _apiClient;
+        public ProductionTasksController(IApiClient apiClient) => _apiClient = apiClient;
 
         private static readonly string[] StageOptions = { "القص", "التقسية", "الفحص", "التغليف" };
         private static readonly string[] StatusOptions = { "قيد التنفيذ", "مكتمل", "متوقف" };
 
-        private void LoadLists(object? selOrder = null, object? selWorker = null,
+        private async Task LoadListsAsync(object? selOrder = null, object? selWorker = null,
                                object? selStage = null, object? selStatus = null)
         {
-            ViewBag.Orders = new SelectList(_context.ProductionOrders, "OrderId", "OrderId", selOrder);
-            ViewBag.Workers = new SelectList(_context.Workers, "WorkerId", "WorkerName", selWorker);
+            var orders = await _apiClient.GetAllAsync<ProductionOrder>(OrdersResource);
+            var workers = await _apiClient.GetAllAsync<Worker>(WorkersResource);
+            ViewBag.Orders = new SelectList(orders, "OrderId", "OrderId", selOrder);
+            ViewBag.Workers = new SelectList(workers, "WorkerId", "WorkerName", selWorker);
             ViewBag.Stages = new SelectList(StageOptions, selStage);
             ViewBag.Statuses = new SelectList(StatusOptions, selStatus);
         }
 
+        // الـ API لا يُرجع الكيانات المرتبطة (الأمر والعامل) ضمن مهام الإنتاج، لذا نربطها هنا للعرض فقط
+        private async Task AttachRelatedAsync(IEnumerable<ProductionTask> tasks)
+        {
+            var orders = (await _apiClient.GetAllAsync<ProductionOrder>(OrdersResource))
+                .ToDictionary(o => o.OrderId);
+            var workers = (await _apiClient.GetAllAsync<Worker>(WorkersResource))
+                .ToDictionary(w => w.WorkerId);
+
+            foreach (var task in tasks)
+            {
+                if (orders.TryGetValue(task.OrderId, out var order)) task.ProductionOrder = order;
+                if (workers.TryGetValue(task.WorkerId, out var worker)) task.Worker = worker;
+            }
+        }
+
         public async Task<IActionResult> Index()
-            => View(await _context.ProductionTasks
-                        .Include(t => t.ProductionOrder)
-                        .Include(t => t.Worker)
-                        .ToListAsync());
+        {
+            var tasks = await _apiClient.GetAllAsync<ProductionTask>(TasksResource);
+            await AttachRelatedAsync(tasks);
+            return View(tasks);
+        }
 
         public async Task<IActionResult> Details(int id)
         {
-            var t = await _context.ProductionTasks
-                        .Include(x => x.ProductionOrder)
-                        .Include(x => x.Worker)
-                        .FirstOrDefaultAsync(x => x.TaskId == id);
+            var t = await _apiClient.GetByIdAsync<ProductionTask>(TasksResource, id);
             if (t == null) return NotFound();
+            await AttachRelatedAsync(new[] { t });
             return View(t);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            LoadLists();
+            await LoadListsAsync();
             return View();
         }
 
@@ -64,19 +83,20 @@ namespace VitraX.MVC.Controllers
             // 3) التحقق يعمل على باقي الحقول (أمر الإنتاج، العامل، المرحلة...)
             if (ModelState.IsValid)
             {
-                _context.ProductionTasks.Add(task);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.CreateAsync(TasksResource, task);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
-            LoadLists(task.OrderId, task.WorkerId, task.Stage, task.Status);
+            await LoadListsAsync(task.OrderId, task.WorkerId, task.Stage, task.Status);
             return View(task);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var t = await _context.ProductionTasks.FindAsync(id);
+            var t = await _apiClient.GetByIdAsync<ProductionTask>(TasksResource, id);
             if (t == null) return NotFound();
-            LoadLists(t.OrderId, t.WorkerId, t.Stage, t.Status);
+            await LoadListsAsync(t.OrderId, t.WorkerId, t.Stage, t.Status);
             return View(t);
         }
 
@@ -96,21 +116,20 @@ namespace VitraX.MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Update(task);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _apiClient.UpdateAsync(TasksResource, id, task);
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, await response.Content.ReadAsStringAsync());
             }
-            LoadLists(task.OrderId, task.WorkerId, task.Stage, task.Status);
+            await LoadListsAsync(task.OrderId, task.WorkerId, task.Stage, task.Status);
             return View(task);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var t = await _context.ProductionTasks
-                        .Include(x => x.ProductionOrder)
-                        .Include(x => x.Worker)
-                        .FirstOrDefaultAsync(x => x.TaskId == id);
+            var t = await _apiClient.GetByIdAsync<ProductionTask>(TasksResource, id);
             if (t == null) return NotFound();
+            await AttachRelatedAsync(new[] { t });
             return View(t);
         }
 
@@ -118,12 +137,7 @@ namespace VitraX.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var t = await _context.ProductionTasks.FindAsync(id);
-            if (t != null)
-            {
-                _context.ProductionTasks.Remove(t);
-                await _context.SaveChangesAsync();
-            }
+            await _apiClient.DeleteAsync(TasksResource, id);
             return RedirectToAction(nameof(Index));
         }
     }

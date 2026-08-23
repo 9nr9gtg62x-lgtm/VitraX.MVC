@@ -1,26 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using VitraX.Domain.Entities;
 using VitraX.MVC.Models;
+using VitraX.MVC.Services;
 
 namespace VitraX.MVC.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly VitraX.Infrastructure.Data.AppDbContext _context;
-        public HomeController(ILogger<HomeController> logger, VitraX.Infrastructure.Data.AppDbContext context)
+        private readonly IApiClient _apiClient;
+        public HomeController(IApiClient apiClient) => _apiClient = apiClient;
+
+        public async Task<IActionResult> Index()
         {
-           
-            _context = context;
-        }
-        public IActionResult Index()
-        {
-            ViewBag.TotalProducts = _context.Products.Count();
-            ViewBag.TotalOrders = _context.ProductionOrders.Count();
-            ViewBag.TotalTasks = _context.ProductionTasks.Count();
-            ViewBag.TotalWorkers = _context.Workers.Count();
+            ViewBag.TotalProducts = (await _apiClient.GetAllAsync<Product>("api/products")).Count;
+            ViewBag.TotalOrders = (await _apiClient.GetAllAsync<ProductionOrder>("api/productionorders")).Count;
+            ViewBag.TotalTasks = (await _apiClient.GetAllAsync<ProductionTask>("api/productiontasks")).Count;
+            ViewBag.TotalWorkers = (await _apiClient.GetAllAsync<Worker>("api/workers")).Count;
             return View();
         }
 
