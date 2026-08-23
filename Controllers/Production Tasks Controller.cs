@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using VitraX.Api.Data;
+using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
 
 namespace VitraX.MVC.Controllers

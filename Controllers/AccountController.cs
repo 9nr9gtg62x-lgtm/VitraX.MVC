@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using VitraX.Api.Data;
+using VitraX.Infrastructure.Data;
 using VitraX.Domain.Entities;
 
 namespace VitraX.MVC.Controllers

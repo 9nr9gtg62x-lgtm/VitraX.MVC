@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Linq;
-using VitraX.Api.Data;
+using VitraX.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
